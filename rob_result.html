@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Processing Complete{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-custom">
+                    <div class="card-header bg-success text-white text-center">
+                        <h3 class="mb-0"><i class="fas fa-check-circle me-2"></i>Processing Complete!</h3>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-file-excel fa-4x text-success mb-3"></i>
+                            <h4>Your ROB file has been processed successfully</h4>
+                            <p class="text-muted">
+                                Processed by: <strong>{{ username }}</strong><br>
+                                Total records: <strong>{{ total_count or records_processed }}</strong><br>
+                                Extracted: <strong>{{ extracted_count }}</strong> rows<br>
+                                Remaining: <strong>{{ remaining_count }}</strong> rows
+                            </p>
+                        </div>
+                        
+                        <div class="alert alert-info alert-custom">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>File Locations:</strong><br>
+                            📁 ROB.xlsx (extracted): C:\Users\vishwas\Desktop\RPA\<br>
+                            📁 Remaining file: Available for download below
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+                            <a href="{{ url_for('download_extracted_rob') }}" class="btn btn-primary btn-lg btn-custom" id="downloadRobBtn">
+                                <i class="fas fa-download me-2"></i>Download ROB.xlsx ({{ extracted_count }} rows)
+                            </a>
+                            <a href="{{ url_for('download_remaining_rob') }}" class="btn btn-success btn-lg btn-custom">
+                                <i class="fas fa-download me-2"></i>Download Remaining ({{ remaining_count }} rows)
+                            </a>
+                            <a href="{{ url_for('rob') }}" class="btn btn-outline-secondary btn-lg btn-custom">
+                                <i class="fas fa-plus me-2"></i>Process Another File
+                            </a>
+                        </div>
+                        
+                        <div class="alert alert-info" id="powerAutomateAlert" style="display: none;">
+                            <i class="fas fa-robot me-2"></i>
+                            <strong>Power Automate Starting...</strong> 
+                            <span id="powerAutomateCountdown">5</span> seconds remaining
+                        </div>
+                        
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Processing Complete!</strong> Your ROB files are ready for download and use.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Processing Summary -->
+                <div class="card card-custom mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Processing Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-file-upload fa-2x text-primary mb-2"></i>
+                                    <h6>Original File</h6>
+                                    <p class="text-muted">{{ total_count or records_processed }} rows</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-arrow-up fa-2x text-success mb-2"></i>
+                                    <h6>Extracted</h6>
+                                    <p class="text-muted">{{ extracted_count }} rows</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-arrow-down fa-2x text-warning mb-2"></i>
+                                    <h6>Remaining</h6>
+                                    <p class="text-muted">{{ remaining_count }} rows</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-success mt-3">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Split Complete:</strong> Your ROB file has been successfully split into two files - 
+                            one for immediate use (ROB.xlsx) and one with the remaining data for future processing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Handle ROB download and Power Automate trigger
+document.getElementById('downloadRobBtn').addEventListener('click', function(e) {
+    // Show Power Automate countdown alert
+    const alert = document.getElementById('powerAutomateAlert');
+    const countdown = document.getElementById('powerAutomateCountdown');
+    
+    alert.style.display = 'block';
+    
+    // Start 5-second countdown
+    let seconds = 5;
+    const timer = setInterval(function() {
+        seconds--;
+        countdown.textContent = seconds;
+        
+        if (seconds <= 0) {
+            clearInterval(timer);
+            countdown.textContent = '0';
+            alert.innerHTML = '<i class="fas fa-robot me-2"></i><strong>Power Automate Started!</strong> Check your desktop for the Power Automate flow.';
+            alert.className = 'alert alert-success';
+        }
+    }, 1000);
+    
+    // Change button text to show what's happening
+    this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Downloaded! Starting Power Automate...';
+    this.classList.add('disabled');
+    
+    // Re-enable button after 10 seconds
+    setTimeout(() => {
+        this.innerHTML = '<i class="fas fa-download me-2"></i>Download ROB.xlsx ({{ extracted_count }} rows)';
+        this.classList.remove('disabled');
+    }, 10000);
+});
+
+console.log('ROB processing completed successfully!');
+</script>
+{% endblock %}

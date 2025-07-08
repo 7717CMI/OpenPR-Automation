@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Home - ROB Processing System{% endblock %}
+
+{% block content %}
+<div class="gradient-bg d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="card card-custom">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="fas fa-chart-line fa-4x text-primary mb-3"></i>
+                            <h1 class="display-4 fw-bold text-dark">ROB Processing System</h1>
+                            <p class="lead text-muted">Transform your market research data with automated processing</p>
+                        </div>
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-upload fa-2x text-success mb-2"></i>
+                                    <h5>Upload Excel</h5>
+                                    <p class="text-muted small">Upload your market research Excel files</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-cogs fa-2x text-warning mb-2"></i>
+                                    <h5>Process Data</h5>
+                                    <p class="text-muted small">Automated data transformation and CTA generation</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center">
+                                    <i class="fas fa-download fa-2x text-info mb-2"></i>
+                                    <h5>Download Result</h5>
+                                    <p class="text-muted small">Get your processed ROB file instantly</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{{ url_for('rob') }}" class="btn btn-primary btn-lg btn-custom">
+                                <i class="fas fa-file-excel me-2"></i>ROB Processing
+                            </a>
+                            <a href="{{ url_for('document_processing') }}" class="btn btn-success btn-lg btn-custom">
+                                <i class="fas fa-file-word me-2"></i>Document Processing
+                            </a>
+                            <a href="{{ url_for('weekly_report') }}" class="btn btn-info btn-lg btn-custom">
+                                <i class="fas fa-calendar-week me-2"></i>Weekly Report
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

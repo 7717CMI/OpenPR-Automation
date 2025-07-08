@@ -1,0 +1,186 @@
+]{% extends "base.html" %}
+
+{% block title %}Document Processing{% endblock %}
+
+{% block content %}
+<div class="gradient-bg py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card card-custom">
+                    <div class="card-header bg-success text-white text-center">
+                        <h3 class="mb-0"><i class="fas fa-file-word me-2"></i>Document Processing & Publishing</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if session_data.username %}
+                        <div class="alert alert-success alert-custom mb-4">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Data Auto-Populated!</strong> User information has been loaded from the ROB processing form.
+                            <ul class="mb-0 mt-2">
+                                <li>Name: {{ session_data.username }}</li>
+                                <li>Email: {{ session_data.email }}</li>
+                                <li>Mobile: {{ session_data.mobile }}</li>
+                                <li>PR ID: {{ session_data.open_pr_id }}</li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <form method="POST" id="docProcessingForm">
+                            <div class="row g-3">
+                                <!-- Author Information -->
+                                <div class="col-12">
+                                    <h5 class="text-primary"><i class="fas fa-user me-2"></i>Author Information</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="author_name" class="form-label">Author Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="author_name" name="author_name" 
+                                           value="{{ session_data.username or 'Vishwas tiwari' }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="author_email" class="form-label">Author Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="author_email" name="author_email" 
+                                           value="{{ session_data.email or 'vishwas@coherentmarketinsights.com' }}" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="company_name" name="company_name" 
+                                           value="Coherenet Market Insights" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone_number" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                                           value="{{ session_data.mobile or '1234567890' }}" required>
+                                </div>
+
+                                <!-- Article Configuration -->
+                                <div class="col-12 mt-4">
+                                    <h5 class="text-primary"><i class="fas fa-cog me-2"></i>Article Configuration</h5>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="article_code" class="form-label">Article Code (PR ID)</label>
+                                    <input type="text" class="form-control" id="article_code" name="article_code" 
+                                           value="{{ session_data.open_pr_id or '6HA-2025-M6K439' }}">
+                                    <div class="form-text">
+                                        {% if session_data.open_pr_id %}
+                                            <i class="fas fa-info-circle text-success me-1"></i>Using PR ID from ROB form
+                                        {% else %}
+                                            <i class="fas fa-info-circle me-1"></i>Default code will be used if empty
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="processing_mode" class="form-label">Processing Mode <span class="text-danger">*</span></label>
+                                    <select class="form-control" id="processing_mode" name="processing_mode" required>
+                                        <option value="auto">Automatic (No interruption)</option>
+                                        <option value="manual">Manual (Pause between articles)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Folder Configuration -->
+                                <div class="col-12 mt-4">
+                                    <h5 class="text-primary"><i class="fas fa-folder me-2"></i>Folder Configuration</h5>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="folder_option" 
+                                               id="use_today" value="today" checked>
+                                        <label class="form-check-label" for="use_today">
+                                            <strong>Use Today's Date Folder</strong>
+                                        </label>
+                                    </div>
+                                    <div class="form-text mb-3">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Path: C:\Users\akshat\Desktop\RPA\Files\[YYYY]\[MM]\[DD]
+                                    </div>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="folder_option" 
+                                               id="use_custom" value="custom">
+                                        <label class="form-check-label" for="use_custom">
+                                            <strong>Use Custom Folder Path</strong>
+                                        </label>
+                                    </div>
+                                    <input type="text" class="form-control mt-2" id="custom_folder" 
+                                           name="custom_folder" placeholder="Enter custom folder path" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 text-center">
+                                <button type="submit" class="btn btn-success btn-lg btn-custom" id="submitBtn">
+                                    <i class="fas fa-play me-2"></i>Start Document Processing
+                                </button>
+                                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg btn-custom ms-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Home
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Process Information -->
+                <div class="card card-custom mt-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Process Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-cogs text-primary me-2"></i>What this process does:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Reads ROB.xlsx for market names</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Converts .doc files to .docx format</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Extracts press release content</li>
+                                    <li><i class="fas fa-check text-success me-2"></i>Publishes to OpenPR.com automatically</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="fas fa-folder-open text-warning me-2"></i>File Requirements:</h6>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-file-excel text-success me-2"></i>ROB.xlsx in C:\Users\akshat\Desktop\RPA\</li>
+                                    <li><i class="fas fa-file-word text-success me-2"></i>ROB_[MarketName].doc files in selected folder</li>
+                                    <li><i class="fas fa-image text-success me-2"></i>image.jpg in C:\Users\akshat\Desktop\code\</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Note:</strong> Make sure Chrome browser is installed and all required files are in place before starting the process.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Handle folder option radio buttons
+document.querySelectorAll('input[name="folder_option"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        const customFolder = document.getElementById('custom_folder');
+        if (this.value === 'custom') {
+            customFolder.disabled = false;
+            customFolder.required = true;
+        } else {
+            customFolder.disabled = true;
+            customFolder.required = false;
+            customFolder.value = '';
+        }
+    });
+});
+
+document.getElementById('docProcessingForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    const mode = document.getElementById('processing_mode').value;
+    
+    if (mode === 'auto') {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting Automatic Processing...';
+    } else {
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Starting Manual Processing...';
+    }
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %}
