@@ -1,0 +1,14 @@
+# Core requirements (cross-platform)
+Flask==2.3.3
+Werkzeug==2.3.7
+pandas==2.0.3
+selenium==4.15.2
+webdriver-manager==4.0.1
+python-docx==0.8.11
+requests==2.31.0
+
+# Windows-specific requirements
+pywin32==306; sys_platform == "win32"
+
+# GUI automation (may need additional setup on Linux)
+pyautogui==0.9.54
